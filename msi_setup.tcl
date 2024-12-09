@@ -1,7 +1,7 @@
 clear -all
 
-analyze -sv09 main.v cache.v cache_datapath.v cache_controller.v memory.v
-elaborate -top main
+analyze -sv09 cache.v cache_datapath.v cache_controller.v
+elaborate -top cache
 
 clock clk
-reset ~reset0 ~reset1
+reset ~reset

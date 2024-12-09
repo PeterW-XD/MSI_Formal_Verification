@@ -19,8 +19,10 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module cache_datapath(
+	input [1:0] p_func,
     input [7:0]   p_addr,
     input         clk,
+	input		reset,
 	 input         snoop_in, invalidate_in, snoop_out, snoop_hit_in, 
 	 input [1:0]   func,
 	 
@@ -49,14 +51,6 @@ module cache_datapath(
 	 
 	 integer i;
 	 
-	 initial 
-	   for (i=0; i<4; i=i+1)
-		begin
-		  stat_mem[i]  <= 2'b00;
-		  tag_mem[i]   <= 1'h0;
-		  cache_mem[i] <= 32'h00000000;
-		end
-	 
 	 reg [7:0]    p_data_out;
     reg [31:0]   b_data_out, snoop_data_out;
     reg [5:0]	  b_addr_out;
@@ -81,62 +75,66 @@ module cache_datapath(
 	   
 	  		  
 		  
-	 always @(posedge clk)
+	 always @(posedge clk, negedge reset)
 	 begin
-	   invalidate_out = 1'b0;
-	   case (func)	 
-	     p_read  : case (offset)
-		              2'b00   : p_data_out <= cache_mem[index][31:24];
-		              2'b01   : p_data_out <= cache_mem[index][23:16];
-		              2'b10   : p_data_out <= cache_mem[index][15:8];
-		              2'b11   : p_data_out <= cache_mem[index][7:0]; 
-		              default : p_data_out <= 8'bz;
-	               endcase		
-		  p_write : begin
-		              case (offset)
-		                2'b00 : cache_mem[index][31:24] <= p_data;
-		                2'b01 : cache_mem[index][23:16] <= p_data;
-		                2'b10 : cache_mem[index][15:8]  <= p_data;
-		                2'b11 : cache_mem[index][7:0]   <= p_data; 
-	                 endcase		
-                    stat_mem[index][0] <= 1'b1;    // assign dirty on processor write
-						  invalidate_out      = 1'b1;    // invalidate other cache entries on processor write
-                  end
-        b_read  : begin
-		              b_addr_out         <= p_addr[7:2];
-					     cache_mem[index]   <= b_data;
-		              tag_mem[index]     <= b_addr[5:2];
-					     stat_mem[index][1] <= 1'b1;    // assign valid on freshly read data
-					     stat_mem[index][0] <= 1'b0;    // assign clean on freshly read data
-				      end				  
-		  b_write : begin
-		              b_addr_out          <= {tag_mem[index], index};
-					     b_data_out          <= cache_mem[index];
-					     stat_mem[index][0]  <= 1'b0;   // assign clean on write-back
-				      end	  
-	   endcase
+		if (~reset) begin
+			for (i=0; i<4; i=i+1) begin
+				stat_mem[i]  <= 2'b00;
+				tag_mem[i]   <= 1'h0;
+				cache_mem[i] <= 32'h00000000;
+			end		
+		end else begin
+
+			invalidate_out = 1'b0;
+			case (func)	 
+				p_read  : case (offset)
+							2'b00   : p_data_out <= cache_mem[index][31:24];
+							2'b01   : p_data_out <= cache_mem[index][23:16];
+							2'b10   : p_data_out <= cache_mem[index][15:8];
+							2'b11   : p_data_out <= cache_mem[index][7:0]; 
+							default : p_data_out <= 8'bz;
+						endcase		
+				p_write : begin
+							case (offset)
+								2'b00 : cache_mem[index][31:24] <= p_data;
+								2'b01 : cache_mem[index][23:16] <= p_data;
+								2'b10 : cache_mem[index][15:8]  <= p_data;
+								2'b11 : cache_mem[index][7:0]   <= p_data; 
+							endcase		
+							stat_mem[index][0] <= 1'b1;    // assign dirty on processor write
+								invalidate_out      = 1'b1;    // invalidate other cache entries on processor write
+						end
+				b_read  : begin
+							b_addr_out         <= p_addr[7:2];
+								cache_mem[index]   <= b_data;
+							tag_mem[index]     <= b_addr[5:2];
+								stat_mem[index][1] <= 1'b1;    // assign valid on freshly read data
+								stat_mem[index][0] <= 1'b0;    // assign clean on freshly read data
+							end				  
+				b_write : begin
+							b_addr_out          <= {tag_mem[index], index};
+							b_data_out          <= cache_mem[index];
+							stat_mem[index][0]  <= 1'b0;   // assign clean on write-back
+							end	  
+			endcase
+		end
 	 end
 	 
 	 
-	 always @(posedge clk)
-	 begin
-	   snoop_ready = 1'b0;
+	always @(posedge clk) begin
+		snoop_ready = 1'b0;
 		
-      if (invalidate_in)
-        stat_mem[sn_index] <= 2'b00;		  
+	if (invalidate_in)
+    	stat_mem[sn_index] <= 2'b00;		  
 		  
-      if (snoop_in)
-      begin
-	     snoop_data_out <= cache_mem[sn_index];
-		  snoop_ready     = 1'b1;
-		end
-		
-		if (snoop_hit_in)
-      begin
-		  cache_mem[index] <= snoop_data;
-		  tag_mem[index]   <= snoop_addr[5:2];
-		end
-		
+    if (snoop_in) begin
+		snoop_data_out <= cache_mem[sn_index];
+		snoop_ready     = 1'b1;
+	end
+	if (snoop_hit_in) begin
+		cache_mem[index] <= snoop_data;
+		tag_mem[index]   <= snoop_addr[5:2];
+	end	
     end		
 		
 	 
@@ -154,6 +152,15 @@ module cache_datapath(
 	        snoop_data =  snoop_in                     ? snoop_data_out : 32'bz, 
 	        stat       =  stat_mem[index];
 		 
-	 
+property read_hit_data_valid; @(posedge clk) disable iff (!reset) (p_func == p_read && read_hit) |-> ##1 (p_data != 8'bz); 
+endproperty
+READ_HIT: assert property (read_hit_data_valid) else $error("Read hit occurred but invalid data returned from cache");
+
+// TODO: func should be p_func (Question on ED. Pending)
+property write_hit_data_update; @(posedge clk) disable iff (!reset) (p_func == p_write && write_hit) |-> ##1 (cache_mem[index][offset*8 +: 8] == $past(p_data)); 
+endproperty 
+WRITE_HIT: assert property (write_hit_data_update) else $error("Write hit occurred but data not updated in cache memory");
+
+
 endmodule
 //

@@ -89,9 +89,8 @@ module cache_controller(
 		  S0  :  ready = 1;
 		  
 		  S1  :  begin
-		           if (read_hit)
-                 begin
-					    func = pfunc;
+		      	if (read_hit) begin
+					    func = pfunc; // TODO
 					  end
 					  else if ((!read_hit||!write_hit) && (stat==excl))             func = b_write;
 					  else if ((!read_hit||!write_hit) && (stat==shrd||stat==invl)) begin func = b_read; snoop_out = 1; end
@@ -118,5 +117,14 @@ module cache_controller(
 					end
 	   endcase
 	 end
-     		
+
+// Transition Assertion 
+S0_TRANSITION: assert property(@(posedge clk) disable iff (~reset) (state == S0 && req) |-> (##1 state == S1));
+S1_TRANSITION1: assert property(@(posedge clk) disable iff (~reset) (state == S1 && read_hit) |-> (##1 state == S0));
+S1_TRANSITION2: assert property(@(posedge clk) disable iff (~reset) (state == S1 && !read_hit && stat == excl) |-> (##1 state == S2));
+S1_TRANSITION3: assert property(@(posedge clk) disable iff (~reset) (state == S1 && !read_hit && (stat == shrd || stat == invl)) |-> (##1 state == S3));
+S2_TRANSITION: assert property(@(posedge clk) disable iff (~reset) (state == S2 && mem_ready) |-> (##1 state == S3));
+S3_TRANSITION: assert property(@(posedge clk) disable iff (~reset) (state == S3 && ((snoop_hit && snoop_ready) || (!snoop_hit && mem_ready))) |-> (##1 state == S1));
+
+
 endmodule

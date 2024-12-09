@@ -36,8 +36,10 @@ module cache(
 	 
 	 
 	 cache_datapath DP (
+		.p_func(p_func),
 		.p_addr(p_addr), 
-		.clk(clk), 
+		.clk(clk),
+		.reset(reset), 
 		.snoop_in(snoop_in), 
 		.invalidate_in(invalidate_in),
 		.snoop_out(snoop_out), 
