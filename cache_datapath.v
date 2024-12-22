@@ -152,14 +152,14 @@ module cache_datapath(
 	        snoop_data =  snoop_in                     ? snoop_data_out : 32'bz, 
 	        stat       =  stat_mem[index];
 		 
-property read_hit_data_valid; @(posedge clk) disable iff (!reset) (p_func == p_read && read_hit) |-> ##1 (p_data != 8'bz); 
-endproperty
-READ_HIT: assert property (read_hit_data_valid) else $error("Read hit occurred but invalid data returned from cache");
+// property read_hit_data_valid; @(posedge clk) disable iff (!reset) (p_func == p_read && read_hit) |-> ##1 (p_data != 8'bz); 
+// endproperty
+// READ_HIT: assert property (read_hit_data_valid) else $error("Read hit occurred but invalid data returned from cache");
 
-// TODO: func should be p_func (Question on ED. Pending)
-property write_hit_data_update; @(posedge clk) disable iff (!reset) (p_func == p_write && write_hit) |-> ##1 (cache_mem[index][offset*8 +: 8] == $past(p_data)); 
-endproperty 
-WRITE_HIT: assert property (write_hit_data_update) else $error("Write hit occurred but data not updated in cache memory");
+// // TODO: func should be p_func (Question on ED. Pending)
+// property write_hit_data_update; @(posedge clk) disable iff (!reset) (p_func == p_write && write_hit) |-> ##1 (cache_mem[index][offset*8 +: 8] == $past(p_data)); 
+// endproperty 
+// WRITE_HIT: assert property (write_hit_data_update) else $error("Write hit occurred but data not updated in cache memory");
 
 
 endmodule

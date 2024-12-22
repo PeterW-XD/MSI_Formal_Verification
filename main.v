@@ -23,7 +23,7 @@ module main(
     inout [7:0] p_data0, p_data1,
 	 input clk,
 	 
-    input p_func0, reset0, req0, p_func1, reset1, req1,
+    input p_func0, reset, req0, p_func1, req1,
 	 
 	 output ready0, ready1
     );
@@ -38,7 +38,7 @@ module main(
 		.p_func(p_func0), 
 		.clk(clk), 
 		.req(req0), 
-		.reset(reset0), 
+		.reset(reset), 
 		.mem_ready(mem_ready), 
 		.snoop_in(snoop10), 
 		.invalidate_in(invalidate10), 
@@ -65,7 +65,7 @@ module main(
 		.p_func(p_func1), 
 		.clk(clk), 
 		.req(req1), 
-		.reset(reset1), 
+		.reset(reset), 
 		.mem_ready(mem_ready), 
 		.snoop_in(snoop01), 
 		.invalidate_in(invalidate01), 

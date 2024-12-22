@@ -127,4 +127,75 @@ S2_TRANSITION: assert property(@(posedge clk) disable iff (~reset) (state == S2 
 S3_TRANSITION: assert property(@(posedge clk) disable iff (~reset) (state == S3 && ((snoop_hit && snoop_ready) || (!snoop_hit && mem_ready))) |-> (##1 state == S1));
 
 
+// Functionally verify read miss in invalidated state
+READ_MISS_INVALID: assert property(
+    @(posedge clk) disable iff (~reset)
+    (req && !read_hit && stat == invl) |->
+    ##[1:$] (
+		// Bus_GetS
+		snoop_out && (mem_cs ^ snoop_hit))
+);
+
+// Verify write miss in invalidated state
+WRITE_MISS_INVALID: assert property(
+    @(posedge clk) disable iff (~reset)
+    (req && !write_hit && stat == invl) |-> 
+    ##[1:$] (
+		// Bus_GetX: One cache is writing, the other is writeback
+		// This the current writing one
+		// Write + invalidate other caches
+		(func == p_write)
+    )
+);
+
+// Verify read miss in shared state
+READ_MISS_SHARED: assert property(
+	@(posedge clk) disable iff (~reset)
+	(req && !read_hit && stat == shrd) |-> 
+    ##[1:$] (
+		// Bus_GetS
+		snoop_out && (mem_rd ^ snoop_hit)
+	)
+);
+
+// Verify write miss in shared state
+WRITE_MISS_SHARED: assert property(
+	@(posedge clk) disable iff (~reset)
+	(req && !write_hit && stat == shrd) |-> 
+	##[1:$] (
+		// Bus_GetX: One cache is writing, the other is writeback
+		// Write + invalidate other caches
+		(func == p_write)
+	)
+);
+
+WRITE_HIT_SHARED: assert property(
+	@(posedge clk) disable iff (~reset)
+	(req && write_hit && stat == shrd) |-> 
+	##[1:$] (
+		// Bus_GetX: One cache is writing, the other is writeback
+		// Write + invalidate other caches
+		(func == p_write)
+	)
+);
+
+WRITE_MISS_MODIFIED: assert property(
+	@(posedge clk) disable iff (~reset)
+	(req && !write_hit && stat == excl) |-> 
+	(   // Bus_Data
+		##[1:$] (func == b_write)) |->
+		// Bus_GetX: One cache is writing, the other is writeback
+		// Write + invalidate other caches
+		(##[1:$] (func == p_write))
+);
+
+READ_MISS_MODIFIED: assert property(
+	@(posedge clk) disable iff (~reset)
+	(req && !read_hit && stat == excl) |-> 
+	(   // Bus_Data
+		##[1:$] (func == b_write)) |->
+		// Bus_GetS
+		(##[1:$] snoop_out && (mem_rd || snoop_hit))
+);
+
 endmodule
