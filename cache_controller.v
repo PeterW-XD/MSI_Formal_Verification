@@ -131,7 +131,7 @@ S3_TRANSITION: assert property(@(posedge clk) disable iff (~reset) (state == S3 
 READ_MISS_INVALID: assert property(
     @(posedge clk) disable iff (~reset)
     (req && !read_hit && stat == invl) |->
-    ##[1:$] (
+    s_eventually (
 		// Bus_GetS
 		snoop_out && (mem_cs ^ snoop_hit)) 
 		&& (stat == shrd)
@@ -141,7 +141,7 @@ READ_MISS_INVALID: assert property(
 WRITE_MISS_INVALID: assert property(
     @(posedge clk) disable iff (~reset)
     (req && !write_hit && stat == invl) |-> 
-    ##[1:$] (
+    s_eventually (
 		// Bus_GetX: Write + invalidate shared blocks + modified blocks writeback
 		// Write + invalidate other caches
 		(func == p_write)
@@ -154,7 +154,7 @@ WRITE_MISS_INVALID: assert property(
 READ_MISS_SHARED: assert property(
 	@(posedge clk) disable iff (~reset)
 	(req && !read_hit && stat == shrd) |-> 
-    ##[1:$] (
+    s_eventually (
 		// Bus_GetS
 		snoop_out && (mem_rd ^ snoop_hit)
 		&& (stat == shrd)
@@ -165,20 +165,20 @@ READ_MISS_SHARED: assert property(
 WRITE_MISS_SHARED: assert property(
 	@(posedge clk) disable iff (~reset)
 	(req && !write_hit && stat == shrd) |-> 
-	##[1:$] (
+    s_eventually (
 		// Bus_GetX: Write + invalidate shared blocks + modified blocks writeback
 		// Write + invalidate other caches
 		(func == p_write)
 		// Leave modified caches write back for now
 		&& (stat == excl)
-	)
+    )
 );
 
 // Verify write hit in shared state: write hit / Bus_Inv
 WRITE_HIT_SHARED: assert property(
 	@(posedge clk) disable iff (~reset)
 	(req && write_hit && stat == shrd) |-> 
-	##[1:$] (
+	s_eventually (
 		// Bus_Inv
 		// Write + invalidate other caches
 		(func == p_write)
@@ -191,10 +191,10 @@ WRITE_MISS_MODIFIED: assert property(
 	@(posedge clk) disable iff (~reset)
 	(req && !write_hit && stat == excl) |-> 
 	// Bus_Data
-	(##[1:$] (func == b_write) && (stat == excl)) |->
+	s_eventually ((func == b_write) && (stat == excl)) |->
 	// Bus_GetX: Write + invalidate shared blocks + modified blocks writeback
 	// Write + invalidate other caches
-	(##[1:$] (func == p_write) && (stat == excl))
+	s_eventually ((func == p_write) && (stat == excl))
 );
 
 // Verify read miss in modified state: read miss / Bus_Data, Bus_GetS
@@ -202,16 +202,16 @@ READ_MISS_MODIFIED: assert property(
 	@(posedge clk) disable iff (~reset)
 	(req && !read_hit && stat == excl) |-> 
 	// Bus_Data
-	(##[1:$] (func == b_write) && (stat == shrd)) |->
+	s_eventually ((func == b_write) && (stat == shrd)) |->
 	// Bus_GetS
-	(##[1:$] snoop_out && (mem_rd ^ snoop_hit) && (stat == shrd))
+	s_eventually (snoop_out && (mem_rd ^ snoop_hit) && (stat == shrd))
 );
 
 // Verify read hit in shared state: read hit / -
 READ_HIT_SHARED: assert property(
 	@(posedge clk) disable iff (~reset)
 	(req && read_hit && stat == shrd) |-> 
-	##[1:$] (
+	s_eventually (
 		stat == shrd
 	)
 );
@@ -220,7 +220,7 @@ READ_HIT_SHARED: assert property(
 READ_HIT_MODIFIED: assert property(
 	@(posedge clk) disable iff (~reset)
 	(req && read_hit && stat == excl) |-> 
-	##[1:$] (
+	s_eventually (
 		stat == excl
 	)
 );
@@ -229,7 +229,7 @@ READ_HIT_MODIFIED: assert property(
 WRITE_HIT_MODIFIED: assert property(
 	@(posedge clk) disable iff (~reset)
 	(req && write_hit && stat == excl) |-> 
-	##[1:$] (
+	s_eventually (
 		stat == excl
 	)
 );
@@ -241,7 +241,7 @@ BUS_GETX_MODIFIED: assert property(
 	@(posedge clk) disable iff (~reset)
 	// Bus_GetX: Write + invalidate shared blocks + modified blocks writeback
 	(func == p_write) |-> 
-	##[1:$] (
+	s_eventually (
 		// Bus_Data
 		(func == b_write) 
 		&& (stat == invl)

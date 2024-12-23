@@ -167,7 +167,7 @@ INVALIDATION_SHARED: assert property(
 	@(posedge clk) disable iff (~reset)
 	// invalidate_in <- Bus_GetS, Bus_Inv
 	(invalidate_in && stat == shrd) |-> 
-	##[1:$] (
+	s_eventually (
 		stat == invl
 	)
 );
@@ -177,7 +177,7 @@ BUS_GETS_MODIFIED: assert property(
 	@(posedge clk) disable iff (~reset)
 	// Snoop
 	(snoop_in && stat == excl) |-> 
-	##[1:$] (
+	s_eventually (
 		stat == shrd
 	)
 );
@@ -187,7 +187,7 @@ BUS_GETS_MODIFIED: assert property(
 // Ensures that when a write hit occurs, the cache updates its memory with the correct data.
 WRITE_HIT_UPDATE: assert property(
   @(posedge clk) disable iff (!reset)
-  (p_func == p_write && write_hit) |-> ##[0:$] (cache_mem[index][offset*8 +: 8] == $past(p_data))
+  (p_func == p_write && write_hit) |-> s_eventually (cache_mem[index][offset*8 +: 8] == $past(p_data))
 );
 
 // BUS_WRITE_VERIFY: Ensures that the data written to the bus matches the data stored in the cache memory.
@@ -195,35 +195,35 @@ WRITE_HIT_UPDATE: assert property(
 // (`b_data_out`) corresponds to the cache's memory content for the given index.
 BUS_WRITE_VERIFY: assert property(
   @(posedge clk) disable iff (!reset)
-  (func == b_write) |-> ##[0:$] (b_data_out == cache_mem[index])
+  (func == b_write) |-> s_eventually (b_data_out == cache_mem[index])
 ) else $error("Bus Write: Incorrect data written to bus.");
 
 BUS_WRITE_COVER: cover property(
   @(posedge clk) disable iff (!reset)
-  (func == b_write) |-> ##[0:$] (b_data_out == cache_mem[index])
+  (func == b_write) |-> s_eventually (b_data_out == cache_mem[index])
 );
 
 
 // Validates that when invalidation is triggered, shared blocks are invalidated correctly.
 INVALIDATION_SHARED_VERIFY: assert property(
   @(posedge clk) disable iff (!reset)
-  (invalidate_in && stat == shrd) |-> ##[0:$] (stat_mem[sn_index] == 2'b00)
+  (invalidate_in && stat == shrd) |-> s_eventually (stat_mem[sn_index] == 2'b00)
 ) else $error("Invalidation: Shared block not invalidated.");
 
 INVALIDATION_SHARED_COVER: cover property(
   @(posedge clk) disable iff (!reset)
-  (invalidate_in && stat == shrd) |-> ##[0:$] (stat_mem[sn_index] == 2'b00)
+  (invalidate_in && stat == shrd) |-> s_eventually (stat_mem[sn_index] == 2'b00)
 );
 
 // Confirms that snooping on the bus correctly retrieves data from the cache.
 SNOOP_HIT_VERIFY: assert property(
   @(posedge clk) disable iff (!reset)
-  (snoop_in && snoop_hit_out) |-> ##[0:$] (snoop_data == cache_mem[sn_index])
+  (snoop_in && snoop_hit_out) |-> s_eventually (snoop_data == cache_mem[sn_index])
 ) else $error("Snoop Hit: Incorrect data returned.");
 
 SNOOP_HIT_COVER: cover property(
   @(posedge clk) disable iff (!reset)
-  (snoop_in && snoop_hit_out) |-> ##[0:$] (snoop_data == cache_mem[sn_index])
+  (snoop_in && snoop_hit_out) |-> s_eventually (snoop_data == cache_mem[sn_index])
 );
 
 
