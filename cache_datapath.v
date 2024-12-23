@@ -162,5 +162,28 @@ module cache_datapath(
 // WRITE_HIT: assert property (write_hit_data_update) else $error("Write hit occurred but data not updated in cache memory");
 
 
+// Verify invalidation in shared state: invalidate_in, Bus_Inv / -
+INVALIDATION_SHARED: assert property(
+	@(posedge clk) disable iff (~reset)
+	// invalidate_in <- Bus_GetS, Bus_Inv
+	(invalidate_in && stat == shrd) |-> 
+	##[1:$] (
+		stat == invl
+	)
+);
+
+// Verify Bus_GetS/Bus_data in modified state: Bus_GetS / Bus_data
+BUS_GETS_MODIFIED: assert property(
+	@(posedge clk) disable iff (~reset)
+	// Snoop
+	(snoop_in && stat == excl) |-> 
+	##[1:$] (
+		stat == shrd
+	)
+);
+
+// Verify 
+
+
 endmodule
 //
