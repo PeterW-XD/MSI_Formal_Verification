@@ -19,7 +19,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module cache_datapath(
-	input [1:0] p_func,
+    input [1:0]   p_func,
     input [7:0]   p_addr,
     input         clk,
 	input		reset,

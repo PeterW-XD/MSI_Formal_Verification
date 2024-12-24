@@ -1,0 +1,90 @@
+# //  ModelSim DE 2024.2 May 20 2024 Linux 4.18.0-553.32.1.el8_10.x86_64
+# //
+# // Unpublished work. Copyright 2024 Siemens
+# //
+# // This material contains trade secrets or otherwise confidential information
+# // owned by Siemens Industry Software Inc. or its affiliates (collectively,
+# // "SISW"), or its licensors. Access to and use of this information is strictly
+# // limited as set forth in the Customer's applicable agreements with SISW.
+# //
+# // This material may not be copied, distributed, or otherwise disclosed outside
+# // of the Customer's facilities without the express written permission of SISW,
+# // and may not be used in any way not expressly authorized by SISW.
+# //
+# do runsim.do
+# Model Technology ModelSim DE vmap 2024.2 Lib Mapping Utility 2024.05 May 20 2024
+# vmap work work 
+# Copying /tools/mentor/ModelSim/2024.2/modelsim_dlx/linuxpe/../modelsim.ini to modelsim.ini
+# Modifying modelsim.ini
+# Model Technology ModelSim DE vlog 2024.2 Compiler 2024.05 May 20 2024
+# Start time: 01:30:41 on Dec 24,2024
+# vlog -reportprogress 300 -sv -incr ../../rtl/main/main.v 
+# -- Compiling module main
+# 
+# Top level modules:
+# 	main
+# End time: 01:30:41 on Dec 24,2024, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim DE vlog 2024.2 Compiler 2024.05 May 20 2024
+# Start time: 01:30:41 on Dec 24,2024
+# vlog -reportprogress 300 -sv -incr test_main.v 
+# -- Compiling module test_main
+# 
+# Top level modules:
+# 	test_main
+# End time: 01:30:41 on Dec 24,2024, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim DE vlog 2024.2 Compiler 2024.05 May 20 2024
+# Start time: 01:30:41 on Dec 24,2024
+# vlog -reportprogress 300 -sv -incr ../../rtl/main/cache.v 
+# -- Compiling module cache
+# 
+# Top level modules:
+# 	cache
+# End time: 01:30:41 on Dec 24,2024, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim DE vlog 2024.2 Compiler 2024.05 May 20 2024
+# Start time: 01:30:41 on Dec 24,2024
+# vlog -reportprogress 300 -sv -incr ../../rtl/main/cache_controller.v 
+# -- Compiling module cache_controller
+# 
+# Top level modules:
+# 	cache_controller
+# End time: 01:30:41 on Dec 24,2024, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim DE vlog 2024.2 Compiler 2024.05 May 20 2024
+# Start time: 01:30:41 on Dec 24,2024
+# vlog -reportprogress 300 -sv -incr ../../rtl/main/cache_datapath.v 
+# -- Compiling module cache_datapath
+# 
+# Top level modules:
+# 	cache_datapath
+# End time: 01:30:42 on Dec 24,2024, Elapsed time: 0:00:01
+# Errors: 0, Warnings: 0
+# Model Technology ModelSim DE vlog 2024.2 Compiler 2024.05 May 20 2024
+# Start time: 01:30:42 on Dec 24,2024
+# vlog -reportprogress 300 -sv -incr ../../rtl/main/memory.v 
+# -- Compiling module memory
+# 
+# Top level modules:
+# 	memory
+# End time: 01:30:42 on Dec 24,2024, Elapsed time: 0:00:00
+# Errors: 0, Warnings: 0
+# ** Warning: (vsim-8690) Ignoring plusarg '+acc' with -novopt in effect.
+# vsim "+acc" -t ps -lib work test_main 
+# Start time: 01:30:42 on Dec 24,2024
+# Loading sv_std.std
+# Loading work.test_main
+# Loading work.main
+# Loading work.cache
+# Loading work.cache_datapath
+# Loading work.cache_controller
+# Loading work.memory
+# ** Warning: (vsim-3015) [PCDPC] - Port size (2) does not match connection size (1) for port 'p_func'. The port definition is at: ../../rtl/main/cache_datapath.v(22).
+#    Time: 0 ps  Iteration: 0  Instance: /test_main/uut/CORE0/DP File: ../../rtl/main/cache.v Line: 38
+# ** Warning: (vsim-3015) [PCDPC] - Port size (2) does not match connection size (1) for port 'p_func'. The port definition is at: ../../rtl/main/cache_datapath.v(22).
+#    Time: 0 ps  Iteration: 0  Instance: /test_main/uut/CORE1/DP File: ../../rtl/main/cache.v Line: 38
+# ** Note: $finish    : test_main.v(58)
+#    Time: 40 ns  Iteration: 0  Instance: /test_main
+# 1
+# Break in Module test_main at test_main.v line 58

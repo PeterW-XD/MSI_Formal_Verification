@@ -1,0 +1,161 @@
+m255
+K4
+z2
+!s11f vlog 2024.2 2024.05, May 20 2024
+13
+!s112 1.1
+!i10d 8192
+!i10e 25
+!i10f 100
+cModel Technology
+Z0 d/homes/user/stud/fall24/aak2250/ALD/qsim_rtl/main
+vcache
+2../../rtl/main/cache.v
+Z1 DXx6 sv_std 3 std 0 22 9oUSJO;AeEaW`l:M@^WG92
+Z2 !s110 1735021841
+!i10b 1
+!s100 @`OU<Y:]455_H487ef@Fo0
+INPQ3i[G7XcWA:nNkV^XN43
+S1
+R0
+Z3 w1734920415
+8../../rtl/main/cache.v
+F../../rtl/main/cache.v
+!i122 2
+L0 21 62
+Z4 VDg1SIo80bB@j0V0VzS_@n1
+Z5 OP;L;2024.2;79
+r1
+!s85 0
+31
+Z6 !s108 1735021841.000000
+!s107 ../../rtl/main/cache.v|
+!s90 -reportprogress|300|-sv|-incr|../../rtl/main/cache.v|
+!i113 1
+o-sv
+Z7 tCvgOpt 0
+vcache_controller
+2../../rtl/main/cache_controller.v
+R1
+R2
+!i10b 1
+!s100 MZQV2S4XNFjDCaCQzi[5Q0
+IcR<KeJg1mL<YQnb7P_:cf3
+S1
+R0
+w1735020606
+8../../rtl/main/cache_controller.v
+F../../rtl/main/cache_controller.v
+!i122 3
+L0 21 253
+R4
+R5
+r1
+!s85 0
+31
+R6
+!s107 ../../rtl/main/cache_controller.v|
+!s90 -reportprogress|300|-sv|-incr|../../rtl/main/cache_controller.v|
+!i113 1
+o-sv
+R7
+vcache_datapath
+2../../rtl/main/cache_datapath.v
+R1
+Z8 !s110 1735021842
+!i10b 1
+!s100 jABoOmFFQmzK?[4C=D]lI0
+I4@dW4@jGW6hfkAaN3FNY90
+S1
+R0
+w1735021775
+8../../rtl/main/cache_datapath.v
+F../../rtl/main/cache_datapath.v
+!i122 4
+L0 21 210
+R4
+R5
+r1
+!s85 0
+31
+R6
+!s107 ../../rtl/main/cache_datapath.v|
+!s90 -reportprogress|300|-sv|-incr|../../rtl/main/cache_datapath.v|
+!i113 1
+o-sv
+R7
+vmain
+2../../rtl/main/main.v
+R1
+R2
+!i10b 1
+!s100 7kU<=EA8104W^0n0B3NYT0
+IPYl4<9mE@zRT02DfCEDgm2
+S1
+R0
+R3
+8../../rtl/main/main.v
+F../../rtl/main/main.v
+!i122 0
+L0 21 79
+R4
+R5
+r1
+!s85 0
+31
+R6
+!s107 ../../rtl/main/main.v|
+!s90 -reportprogress|300|-sv|-incr|../../rtl/main/main.v|
+!i113 1
+o-sv
+R7
+vmemory
+2../../rtl/main/memory.v
+R1
+R8
+!i10b 1
+!s100 <:l^>I@XCR8:8EUd<3jRW2
+Ie5fd@f]M8AWG;`I_nUhgJ2
+S1
+R0
+R3
+8../../rtl/main/memory.v
+F../../rtl/main/memory.v
+!i122 5
+L0 21 33
+R4
+R5
+r1
+!s85 0
+31
+!s108 1735021842.000000
+!s107 ../../rtl/main/memory.v|
+!s90 -reportprogress|300|-sv|-incr|../../rtl/main/memory.v|
+!i113 1
+o-sv
+R7
+vtest_main
+2test_main.v
+R1
+R2
+!i10b 1
+!s100 D3jIP6k@B:z8a[HWlS[el1
+IMlc@b@:iZ_YJST@O:e^C^1
+S1
+R0
+w1735021483
+8test_main.v
+Ftest_main.v
+!i122 1
+L0 3 58
+R4
+R5
+r1
+!s85 0
+31
+R6
+!s107 test_main.v|
+!s90 -reportprogress|300|-sv|-incr|test_main.v|
+!i113 1
+o-sv
+R7
